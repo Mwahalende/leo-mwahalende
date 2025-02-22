@@ -51,7 +51,7 @@ background:white;
             background-color: blue;
             padding: 10px;
             margin: 0;
-            font-size: 22px;
+            font-size: 27px;
         }
         h1 {
             color: aliceblue;
@@ -61,7 +61,7 @@ background:white;
             font-size: 50px;
         }
         p {
-            font-size: 18px;
+            font-size: 26px;
         }
 
         /* Responsive design for mobile phones */
@@ -79,14 +79,14 @@ background:white;
                 padding: 20px;
             }
             h2 {
-                font-size: 16px;
+                font-size: 30px;
                 padding: 8px;
             }
             p {
-                font-size: 14px;
+                font-size: 26px;
             }
             button {
-                font-size: 14px;
+                font-size: 26px;
                 padding: 8px;
             }
         }
@@ -113,7 +113,7 @@ background:white;
                             ? `<img src="${media.url}" alt="Uploaded Image">` 
                             : `<video controls><source src="${media.url}" type="video/mp4"></video>`}
                         <p><strong>${media.caption || "No Caption"}</strong></p>
-                        <p style="color:blue;opacity:0.6;margin-left:0;"><strong>Uploaded at:</strong> ${uploadTime}</p>
+                        <p style="color:blue;opacity:0.6;margin-left:0;"><strong></strong> ${uploadTime}</p>
                         <button onclick="likeMedia('${media._id}')">👍 Like (${media.likes})</button>
                     `;
                     gallery.appendChild(div);
