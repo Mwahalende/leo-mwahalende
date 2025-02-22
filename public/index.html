@@ -1,68 +1,45 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <title>User Gallery</title>
     <style>
-    body {
-        font-family: Arial, sans-serif;
-        background: linear-gradient(to right, #12c2e9, #c471ed, #f64f59);
-        text-align: center;
-        margin: 0;
-        padding: 0;
-        color: white;
-    }
-    .gallery {
-        display: flex;
-        flex-wrap: wrap;
-        justify-content: center;
-        gap: 20px;
-        padding: 20px;
-        max-width: 1200px;
-        margin: 0 auto;
-    }
-    .media {
-        background: white;
-        padding: 15px;
-        border-radius: 15px;
-        box-shadow: 0 0 15px rgba(0, 0, 0, 0.3);
-        width: 400px;
-        transition: transform 0.3s ease, box-shadow 0.3s ease;
-    }
-    .media:hover {
-        transform: translateY(-5px);
-        box-shadow: 0 0 25px rgba(0, 0, 0, 0.5);
-    }
-    img, video {
-        max-width: 100%;
-        width: 100%;
-        height: 400px;
-        border-radius: 10px;
-        box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
-        transition: transform 0.3s ease;
-    }
-    img:hover, video:hover {
-        transform: scale(1.03);
-    }
-    button {
-        background: #007bff;
-        color: white;
-        border: none;
-        padding: 8px 15px;
-        border-radius: 8px;
-        cursor: pointer;
-        margin: 10px 0;
-        transition: background-color 0.3s ease;
-    }
-    button:hover {
-        background: #0056b3;
-    }
-    p {
-        color: #333;
-        margin: 5px 0;
-    }
-</style>
-
+        body {
+            font-family: Arial, sans-serif;
+            background: linear-gradient(to right, #12c2e9, #c471ed, #f64f59);
+            text-align: center;
+        }
+        .gallery {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 15px;
+            margin: 20px;
+        }
+        .media {
+            background: white;
+            padding: 10px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+            width: 360px;
+        }
+        img, video {
+            max-width: 100%;
+            width: 500px;
+            height: 390px;
+            border-radius: 10px;
+        }
+        button {
+            background: #007bff;
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 5px;
+        }
+    </style>
 </head>
 <body>
     <h1>HOME OF HAPPY AND COURAGE</h1>
@@ -84,7 +61,7 @@
                             ? `<img src="${media.url}" alt="Uploaded Image">` 
                             : `<video controls><source src="${media.url}" type="video/mp4"></video>`}
                         <p>${media.caption || "No Caption"}</p>
-                        <p><strong>Uploaded at:</strong> ${uploadTime}</p>
+                        <p style="color:blue;opacity:0.6;margin-left:0;"><strong></strong> ${uploadTime}</p>
                         <button onclick="likeMedia('${media._id}')">👍 Like (${media.likes})</button>
                     `;
                     gallery.appendChild(div);
@@ -98,5 +75,3 @@
     </script>
 </body>
 </html>
-
-
