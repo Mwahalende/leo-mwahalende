@@ -114,9 +114,9 @@ app.post("/media/upload", upload.single("media"), async (req, res) => {
   res.redirect("/admin.html");
 });
 
-// Get All Media
+// Get All Media (Sorted from Newest to Oldest)
 app.get("/media/all", async (req, res) => {
-  const mediaItems = await Media.find();
+  const mediaItems = await Media.find().sort({ uploadTime: -1 });
   res.json(mediaItems);
 });
 
