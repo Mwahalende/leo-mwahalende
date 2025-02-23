@@ -12,7 +12,7 @@
             text-align: center;
             margin: 0;
             padding: 0;
-           
+            background: rgba(255, 255, 255, 0.947);
         }
         .gallery {
             display: flex;
@@ -30,7 +30,7 @@
             margin: 0 auto;
             margin-top: 30px;
             height: auto;
-            font-size: 17px;
+            font-size: 25px;
         }
         /* Further increased width and height for images and videos */
         img, video {
@@ -62,7 +62,29 @@
             margin: 0;
             padding: 10px;
             background-color: blue;
+            font-size: 50px;
             padding: 40px;
+        }
+        textarea {
+            width: 90%;
+            height: 50px;
+            margin: 10px 0;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+            padding: 5px;
+        }
+        .comment-section {
+            margin-top: 10px;
+            text-align: left;
+            padding: 10px;
+            background: #f9f9f9;
+            border-radius: 5px;
+        }
+        .comment {
+            background: #e3e3e3;
+            padding: 5px;
+            margin-top: 5px;
+            border-radius: 5px;
         }
 
         /* Responsive design for mobile phones */
@@ -104,6 +126,12 @@
                         <p><strong>${media.caption || "No Caption"}</strong></p>
                         <p style="color:blue;opacity:0.5;margin-left:0;"><strong></strong> ${uploadTime}</p>
                         <button onclick="likeMedia('${media._id}')">👍 Like (${media.likes})</button>
+
+                        <div class="comment-section">
+                            <textarea id="comment-${media._id}" placeholder="Write a comment..."></textarea>
+                            <button onclick="addComment('${media._id}')">Comment</button>
+                            <div id="comments-${media._id}"></div>
+                        </div>
                     `;
                     gallery.appendChild(div);
                 });
@@ -113,10 +141,21 @@
             fetch(`/media/like/${id}`, { method: "POST" })
                 .then(() => location.reload());
         }
-    </script>
 
-    <!-- Added text starts here -->
-    <p><strong>Note:</strong> This gallery showcases user-uploaded media. Users can like and interact with the content. Stay tuned for more features!</p>
-  
+        function addComment(mediaId) {
+            const commentInput = document.getElementById(`comment-${mediaId}`);
+            const commentText = commentInput.value.trim();
+            if (commentText) {
+                const commentSection = document.getElementById(`comments-${mediaId}`);
+                const commentDiv = document.createElement("div");
+                commentDiv.className = "comment";
+                commentDiv.innerText = commentText;
+                commentSection.appendChild(commentDiv);
+                commentInput.value = ""; // Clear input after posting
+            }
+        }
+    </script>
 </body>
 </html>
+
+
