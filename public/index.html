@@ -26,18 +26,17 @@
             padding: 0px;
             border-radius: 10px;
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
-            width: 380px; /* Increased width */
+            width: 380px;
             margin: 0 auto;
             margin-top: 30px;
             height: auto;
             font-size: 25px;
         }
-        /* Further increased width and height for images and videos */
         img, video {
             width: 100%;
-            height: 360px; /* Increased height */
+            height: 360px;
             border-radius: 10px;
-            object-fit: cover; /* Ensures consistent display without distortion */
+            object-fit: cover;
             border-bottom-right-radius: 0px;
             border-bottom-left-radius: 0px;
         }
@@ -87,7 +86,6 @@
             border-radius: 5px;
         }
 
-        /* Responsive design for mobile phones */
         @media (max-width: 768px) {
             .media {
                 width: 100%;
@@ -109,53 +107,72 @@
     <h2>leomwahalende@gmail.com<br>LEO GALAXY STAR<br>0686962149</h2>
 
     <script>
-        fetch("/media/all")
-            .then(res => res.json())
-            .then(data => {
-                const gallery = document.getElementById("gallery");
-                gallery.innerHTML = "";
-                data.forEach(media => {
-                    const div = document.createElement("div");
-                    div.className = "media";
-                    const uploadTime = new Date(media.uploadTime).toLocaleString();
+        async function fetchMedia() {
+            const res = await fetch("/media/all");
+            const data = await res.json();
+            const gallery = document.getElementById("gallery");
+            gallery.innerHTML = "";
 
-                    div.innerHTML = `
-                        ${media.type === "image" 
-                            ? `<img src="${media.url}" alt="Uploaded Image">` 
-                            : `<video controls><source src="${media.url}" type="video/mp4"></video>`}
-                        <p><strong>${media.caption || "No Caption"}</strong></p>
-                        <p style="color:blue;opacity:0.5;margin-left:0;"><strong></strong> ${uploadTime}</p>
-                        <button onclick="likeMedia('${media._id}')">👍 Like (${media.likes})</button>
+            for (let media of data) {
+                const div = document.createElement("div");
+                div.className = "media";
+                const uploadTime = new Date(media.uploadTime).toLocaleString();
 
-                        <div class="comment-section">
-                            <textarea id="comment-${media._id}" placeholder="Write a comment..."></textarea>
-                            <button onclick="addComment('${media._id}')">Comment</button>
-                            <div id="comments-${media._id}"></div>
-                        </div>
-                    `;
-                    gallery.appendChild(div);
-                });
-            });
+                div.innerHTML = `
+                    ${media.type === "image" 
+                        ? `<img src="${media.url}" alt="Uploaded Image">` 
+                        : `<video controls><source src="${media.url}" type="video/mp4"></video>`}
+                    <p><strong>${media.caption || "No Caption"}</strong></p>
+                    <p style="color:blue;opacity:0.5;margin-left:0;"><strong></strong> ${uploadTime}</p>
+                    <button onclick="likeMedia('${media._id}')">👍 Like (${media.likes})</button>
+
+                    <div class="comment-section">
+                        <textarea id="comment-${media._id}" placeholder="Write a comment..."></textarea>
+                        <button onclick="addComment('${media._id}')">Comment</button>
+                        <div id="comments-${media._id}"></div>
+                    </div>
+                `;
+                gallery.appendChild(div);
+
+                fetchComments(media._id); // Load existing comments
+            }
+        }
 
         function likeMedia(id) {
             fetch(`/media/like/${id}`, { method: "POST" })
-                .then(() => location.reload());
+                .then(() => fetchMedia());
         }
 
-        function addComment(mediaId) {
+        async function addComment(mediaId) {
             const commentInput = document.getElementById(`comment-${mediaId}`);
             const commentText = commentInput.value.trim();
-            if (commentText) {
-                const commentSection = document.getElementById(`comments-${mediaId}`);
+            if (!commentText) return;
+
+            await fetch(`/media/comment/${mediaId}`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ text: commentText })
+            });
+
+            commentInput.value = "";
+            fetchComments(mediaId);
+        }
+
+        async function fetchComments(mediaId) {
+            const res = await fetch(`/media/comments/${mediaId}`);
+            const comments = await res.json();
+            const commentSection = document.getElementById(`comments-${mediaId}`);
+            commentSection.innerHTML = "";
+
+            for (let comment of comments) {
                 const commentDiv = document.createElement("div");
                 commentDiv.className = "comment";
-                commentDiv.innerText = commentText;
+                commentDiv.innerText = comment.text;
                 commentSection.appendChild(commentDiv);
-                commentInput.value = ""; // Clear input after posting
             }
         }
+
+        fetchMedia();
     </script>
 </body>
 </html>
-
-
