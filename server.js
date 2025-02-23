@@ -3,7 +3,6 @@ const multer = require("multer");
 const mongoose = require("mongoose");
 const bcrypt = require("bcryptjs");
 const session = require("express-session");
-const path = require("path");
 const { v2: cloudinary } = require("cloudinary");
 const { CloudinaryStorage } = require("multer-storage-cloudinary");
 
@@ -20,7 +19,7 @@ console.log("✅ Cloudinary Connected");
 
 // MongoDB Connection
 mongoose.connect("mongodb+srv://user1:malafiki@leodb.5mf7q.mongodb.net/mediaz?retryWrites=true&w=majority&appName=leodb")
-  .then(() => console.log("✅ MongoDB connected to mediaz"))
+  .then(() => console.log("✅ MongoDB connected"))
   .catch((err) => console.error("❌ Connection error:", err));
 
 // Schemas
@@ -31,12 +30,11 @@ const AdminSchema = new mongoose.Schema({
 });
 
 const MediaSchema = new mongoose.Schema({
-  url: String,         // Cloudinary URL
-  publicId: String,    // For deletion
-  type: String,        // 'image' or 'video'
+  url: String, 
+  publicId: String, 
+  type: String, 
   caption: String,
   likes: { type: Number, default: 0 },
-  comments: [{ username: String, comment: String }],
   uploadTime: { type: Date, default: Date.now },
 });
 
@@ -71,32 +69,12 @@ const storage = new CloudinaryStorage({
 
 const upload = multer({ storage });
 
-// Admin Registration
-app.post("/admin/register", async (req, res) => {
-  const { fullName, email, password, confirmPassword } = req.body;
-  if (password !== confirmPassword) return res.send("❌ Passwords do not match!");
+// Admin Routes
+// Admin login, register, and other related functionalities here (same as your previous setup)
 
-  const hashedPassword = await bcrypt.hash(password, 10);
-  const admin = new Admin({ fullName, email, password: hashedPassword });
-  await admin.save();
-  res.redirect("/login.html");
-});
-
-// Admin Login
-app.post("/admin/login", async (req, res) => {
-  const { email, password } = req.body;
-  const admin = await Admin.findOne({ email });
-
-  if (!admin || !(await bcrypt.compare(password, admin.password))) {
-    return res.send("❌ Invalid credentials!");
-  }
-
-  req.session.admin = admin;
-  res.redirect("/admin.html");
-});
-
-// Upload Media (Admin Only)
-app.post("/media/upload", upload.single("media"), async (req, res) => {
+// Media Routes
+// Upload Media
+app.post("/media/upload", upload.single("file"), async (req, res) => {
   if (!req.session.admin) {
     return res.status(401).send("❌ Unauthorized");
   }
@@ -105,7 +83,7 @@ app.post("/media/upload", upload.single("media"), async (req, res) => {
   const mediaData = {
     url: req.file.path,
     publicId: req.file.filename,
-    type: type, // Either 'image' or 'video'
+    type: type, 
     caption: caption || "",
   };
 
@@ -114,7 +92,7 @@ app.post("/media/upload", upload.single("media"), async (req, res) => {
   res.redirect("/admin.html");
 });
 
-// Get All Media (Sorted from Newest to Oldest)
+// Get All Media
 app.get("/media/all", async (req, res) => {
   const mediaItems = await Media.find().sort({ uploadTime: -1 });
   res.json(mediaItems);
@@ -133,38 +111,7 @@ app.post("/media/like/:id", async (req, res) => {
   }
 });
 
-// Add Comment
-app.post("/media/comment/:id", async (req, res) => {
-  const { id } = req.params;
-  const { text } = req.body;
-  const media = await Media.findById(id);
-
-  if (!media) {
-    return res.status(404).send("❌ Media not found");
-  }
-
-  const comment = {
-    username: "Guest", // You can adjust this to fetch a logged-in user's name if needed
-    comment: text,
-  };
-
-  media.comments.push(comment);
-  await media.save();
-  res.json(media.comments);  // Send the updated comments back
-});
-
-// Get Comments for a Media Item
-app.get("/media/comments/:id", async (req, res) => {
-  const { id } = req.params;
-  const media = await Media.findById(id);
-  if (!media) {
-    return res.status(404).send("❌ Media not found");
-  }
-
-  res.json(media.comments);  // Return the comments
-});
-
-// Delete Media (Admin Only)
+// Delete Media
 app.delete("/media/delete/:id", async (req, res) => {
   if (!req.session.admin) {
     return res.status(401).send("❌ Unauthorized");
