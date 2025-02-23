@@ -10,7 +10,7 @@
             text-align: center;
             margin: 0;
             padding: 0;
-background:white;
+            background: rgba(255, 255, 255, 0.947);
         }
         .gallery {
             display: flex;
@@ -20,29 +20,31 @@ background:white;
             margin: 10px;
         }
         .media {
-            background: white;
-            padding: 10px;
+            background: rgba(255, 255, 255, 0.947);
+            padding: 0px;
             border-radius: 10px;
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
-            width: 90%;
-            max-width: 800px;
+            width: 380px; /* Increased width */
             margin: 0 auto;
             margin-top: 30px;
-            height: 400px;
-            overflow: auto;
+            height: auto;
+            font-size: 25px;
+        
         }
+        /* Further increased width and height for images and videos */
         img, video {
             width: 100%;
-            height: auto;
+            height: 360px; /* Increased height */
             border-radius: 10px;
-            object-fit: cover;
+            object-fit: cover; /* Ensures consistent display without distortion */
+            border-bottom-right-radius: 0px;
+            border-bottom-left-radius: 0px;
         }
         button {
             background: #007bff;
             color: white;
             border: none;
-            padding: 10px;
-            font-size: 30px;
+            padding: 5px 10px;
             border-radius: 5px;
             cursor: pointer;
             margin: 5px;
@@ -53,43 +55,29 @@ background:white;
             background-color: blue;
             padding: 10px;
             margin: 0;
-            font-size: 40px;
         }
         h1 {
             color: aliceblue;
             margin: 0;
-            padding: 40px;
+            padding: 10px;
             background-color: blue;
-            font-size: 70px;
-        }
-        p {
-            font-size: 40px;
+            font-size: 50px;
+            padding: 40px;
         }
 
         /* Responsive design for mobile phones */
         @media (max-width: 768px) {
             .media {
                 width: 100%;
-                padding: 5px;
+                padding: 0px;
             }
             img, video {
                 width: 100%;
                 height: auto;
             }
-            h1 {
-                font-size: 40px;
-                padding: 20px;
-            }
-            h2 {
-                font-size: 40px;
-                padding: 8px;
-            }
-            p {
-                font-size: 40px;
-            }
-            button {
-                font-size: 40px;
-                padding: 8px;
+            body {
+                padding: 0 0px;
+            
             }
         }
     </style>
@@ -115,7 +103,7 @@ background:white;
                             ? `<img src="${media.url}" alt="Uploaded Image">` 
                             : `<video controls><source src="${media.url}" type="video/mp4"></video>`}
                         <p><strong>${media.caption || "No Caption"}</strong></p>
-                        <p style="color:blue;opacity:0.6;margin-left:0;"><strong></strong> ${uploadTime}</p>
+                        <p style="color:blue;opacity:0.5;margin-left:0;"><strong></strong> ${uploadTime}</p>
                         <button onclick="likeMedia('${media._id}')">👍 Like (${media.likes})</button>
                     `;
                     gallery.appendChild(div);
