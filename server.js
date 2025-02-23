@@ -164,7 +164,7 @@ app.get("/media/comments/:id", async (req, res) => {
   res.json(media.comments);  // Return the comments
 });
 
-// Delete Media
+// Delete Media (Admin Only)
 app.delete("/media/delete/:id", async (req, res) => {
   if (!req.session.admin) {
     return res.status(401).send("❌ Unauthorized");
@@ -183,4 +183,4 @@ app.delete("/media/delete/:id", async (req, res) => {
 
 app.listen(PORT, () => {
   console.log(`Server running on http://localhost:${PORT}`);
-})
+});
