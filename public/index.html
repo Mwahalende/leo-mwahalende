@@ -12,7 +12,7 @@
             text-align: center;
             margin: 0;
             padding: 0;
-            background: rgba(255, 255, 255, 0.947);
+            
         }
         .gallery {
             display: flex;
@@ -148,26 +148,29 @@
             const commentText = commentInput.value.trim();
             if (!commentText) return;
 
+            // Send comment to the server
             await fetch(`/media/comment/${mediaId}`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ text: commentText })
             });
 
-            commentInput.value = "";
-            fetchComments(mediaId);
+            commentInput.value = "";  // Clear input after submission
+
+            fetchComments(mediaId);  // Fetch and update comments after adding
         }
 
         async function fetchComments(mediaId) {
             const res = await fetch(`/media/comments/${mediaId}`);
             const comments = await res.json();
             const commentSection = document.getElementById(`comments-${mediaId}`);
-            commentSection.innerHTML = "";
+            commentSection.innerHTML = "";  // Clear current comments
 
+            // Render each comment
             for (let comment of comments) {
                 const commentDiv = document.createElement("div");
                 commentDiv.className = "comment";
-                commentDiv.innerText = comment.text;
+                commentDiv.innerText = `${comment.username}: ${comment.comment}`;
                 commentSection.appendChild(commentDiv);
             }
         }
