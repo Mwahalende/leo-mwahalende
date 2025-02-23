@@ -19,7 +19,6 @@ cloudinary.config({
 console.log("✅ Cloudinary Connected");
 
 // MongoDB Connection
-// Database Connection
 mongoose.connect("mongodb+srv://user1:malafiki@leodb.5mf7q.mongodb.net/mediaz?retryWrites=true&w=majority&appName=leodb")
   .then(() => console.log("✅ MongoDB connected to mediaz"))
   .catch((err) => console.error("❌ Connection error:", err));
@@ -37,7 +36,7 @@ const MediaSchema = new mongoose.Schema({
   type: String,        // 'image' or 'video'
   caption: String,
   likes: { type: Number, default: 0 },
-  comments: [{ username: String, comment: String }],
+  comments: [{ username: String, comment: String }],  // Comment Array
   uploadTime: { type: Date, default: Date.now },
 });
 
@@ -103,8 +102,8 @@ app.post("/media/upload", upload.single("file"), async (req, res) => {
   try {
     const type = req.file.mimetype.startsWith("image") ? "image" : "video";
     const newMedia = new Media({
-      url: req.file.path,           // Cloudinary URL
-      publicId: req.file.filename,  // Cloudinary Public ID for deletion
+      url: req.file.path,
+      publicId: req.file.filename,
       type,
       caption: req.body.caption,
     });
@@ -130,21 +129,24 @@ app.post("/media/like/:id", async (req, res) => {
   res.send("👍 Liked!");
 });
 
-// Delete Media (Admin Only)
-app.delete("/media/delete/:id", async (req, res) => {
-  if (!req.session.admin) return res.send("❌ Unauthorized!");
-
+// **Add Comment to Media**
+app.post("/media/comment/:id", async (req, res) => {
+  const { username, comment } = req.body;
   const media = await Media.findById(req.params.id);
-  if (!media) return res.send("❌ Media not found!");
+  if (!media) return res.json({ success: false, message: "Media not found!" });
 
-  try {
-    await cloudinary.uploader.destroy(media.publicId);
-    await Media.findByIdAndDelete(req.params.id);
-    res.send("🗑️ Media deleted!");
-  } catch (error) {
-    console.error("❌ Failed to delete from Cloudinary:", error);
-    res.status(500).send("❌ Failed to delete media!");
-  }
+  media.comments.push({ username, comment });
+  await media.save();
+  res.json({ success: true, message: "Comment added!" });
+});
+
+// Delete Media (Admin Only) - Also removes comments
+app.delete("/media/delete/:id", async (req, res) => {
+  const media = await Media.findByIdAndDelete(req.params.id);
+  if (!media) return res.json({ success: false, message: "Media not found!" });
+
+  await cloudinary.uploader.destroy(media.publicId);
+  res.json({ success: true, message: "🗑️ Media and associated comments deleted!" });
 });
 
 // Admin Logout
