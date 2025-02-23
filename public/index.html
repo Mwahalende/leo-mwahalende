@@ -58,7 +58,7 @@
             background-color: blue;
             padding: 20px;
             margin: 0;
-            font-size: 40px;
+            
         }
         h2 {
             color: white;
@@ -110,7 +110,7 @@
                             ? `<img src="${media.url}" alt="Uploaded Image">`
                             : `<video controls><source src="${media.url}" type="video/mp4"></video>`}
                         <p><strong>${media.caption || "No Caption"}</strong></p>
-                        <p style="color: blue; opacity: 0.7; margin: 5px 0;"><strong>Uploaded at:</strong> ${uploadTime}</p>
+                        <p style="color: blue; opacity: 0.7; margin: 5px 0;"><strong></strong> ${uploadTime}</p>
                         <button onclick="likeMedia('${media._id}')">👍 Like (${media.likes})</button>
 
                         <div class="comment-section">
