@@ -29,14 +29,6 @@
             width: 500px;
             height: 300px;
         }
-        input[type="text"], input[type="file"] {
-            width: 300px; /* Medium-sized input box */
-            padding: 8px;
-            margin: 10px 0;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-            font-size: 16px;
-        }
         button {
             background: #007bff;
             color: white;
@@ -48,6 +40,18 @@
         }
         .delete-btn {
             background: #e74c3c;
+        }
+        .comment-section {
+            margin-top: 10px;
+            text-align: left;
+        }
+        .comment-section input {
+            width: 80%;
+            padding: 5px;
+            margin-top: 5px;
+        }
+        .comment-section button {
+            margin-top: 5px;
         }
     </style>
 </head>
@@ -81,6 +85,15 @@
                         <p><strong>Uploaded at:</strong> ${uploadTime}</p>
                         <button onclick="likeMedia('${media._id}')">👍 Like (${media.likes})</button>
                         <button class="delete-btn" onclick="deleteMedia('${media._id}')">🗑️ Delete</button>
+
+                        <div class="comment-section">
+                            <h4>Comments:</h4>
+                            <div id="comments-${media._id}">
+                                ${media.comments.map(comment => `<p><strong>${comment.username}:</strong> ${comment.comment}</p>`).join("")}
+                            </div>
+                            <input type="text" id="comment-${media._id}" placeholder="Write a comment...">
+                            <button onclick="addComment('${media._id}')">💬 Comment</button>
+                        </div>
                     `;
                     gallery.appendChild(div);
                 });
@@ -94,6 +107,19 @@
         function deleteMedia(id) {
             fetch(`/media/delete/${id}`, { method: "DELETE" })
                 .then(() => location.reload());
+        }
+
+        function addComment(mediaId) {
+            const commentInput = document.getElementById(`comment-${mediaId}`);
+            const commentText = commentInput.value.trim();
+            if (!commentText) return alert("Please write a comment.");
+
+            fetch(`/media/comment/${mediaId}`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ username: "Admin", comment: commentText })
+            })
+            .then(() => location.reload());
         }
     </script>
 </body>
