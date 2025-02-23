@@ -183,4 +183,4 @@ app.delete("/media/delete/:id", async (req, res) => {
 
 app.listen(PORT, () => {
   console.log(`Server running on http://localhost:${PORT}`);
-});
+})
