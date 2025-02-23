@@ -64,12 +64,11 @@
     <div class="gallery" id="gallery"></div>
 
     <script>
-        // Fetch and display all media
         fetch("/media/all")
             .then(res => res.json())
             .then(data => {
                 const gallery = document.getElementById("gallery");
-                gallery.innerHTML = ""; // Clear any previous content
+                gallery.innerHTML = "";
                 data.forEach(media => {
                     const div = document.createElement("div");
                     div.className = "media";
@@ -82,31 +81,20 @@
                         <p>${media.caption || "No Caption"}</p>
                         <p><strong>Uploaded at:</strong> ${uploadTime}</p>
                         <button onclick="likeMedia('${media._id}')">👍 Like (${media.likes})</button>
-                        <button class="delete-btn" onclick="confirmDelete('${media._id}')">🗑️ Delete</button>
+                        <button class="delete-btn" onclick="deleteMedia('${media._id}')">🗑️ Delete</button>
                     `;
                     gallery.appendChild(div);
                 });
             });
 
-        // Handle Like functionality
         function likeMedia(id) {
             fetch(`/media/like/${id}`, { method: "POST" })
                 .then(() => location.reload());
         }
 
-        // Ask for confirmation before deleting media
-        function confirmDelete(id) {
-            const confirmation = confirm("Are you sure you want to delete this media?");
-            if (confirmation) {
-                deleteMedia(id);  // Call delete function if confirmed
-            }
-        }
-
-        // Handle Delete functionality
         function deleteMedia(id) {
             fetch(`/media/delete/${id}`, { method: "DELETE" })
-                .then(() => location.reload())
-                .catch(err => alert("❌ Failed to delete the media"));
+                .then(() => location.reload());
         }
     </script>
 </body>
