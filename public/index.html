@@ -208,7 +208,7 @@
             fetch(`/media/comment/${mediaId}`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ username: "👤", comment: commentText })
+                body: JSON.stringify({ username: "<👤>", comment: commentText })
             })
             .then(() => location.reload());
         }
